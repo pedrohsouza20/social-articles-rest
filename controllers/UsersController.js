@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 
 const User = require("../models/User");
 
@@ -7,7 +8,10 @@ const User = require("../models/User");
 router.post("/user/new", (req, res) => {
     let userName = req.body.userName;
     let email = req.body.email;
+    let password = req.body.password;
 
+    let salt = bcrypt.genSaltSync(10);
+    let hash = bcrypt.hashSync(password, salt);
     // Procura no banco por usuarios com o userName inserido
     User.findAll({
         where: {
@@ -25,7 +29,8 @@ router.post("/user/new", (req, res) => {
                 if (data.length == 0) {
                     User.create({
                         userName: userName,
-                        email: email
+                        email: email,
+                        password: hash
                     })
                         .then(() => {
                             res.json({ "status": 201, "message": "User created successfully" });
@@ -97,6 +102,35 @@ router.get("/user/:id", (req, res) => {
                 "message": error,
             })
         })
+})
+
+// Login
+router.post("/login", (req, res) => {
+    let email = req.body.email;
+    let password = req.body.password;
+
+    User.findOne({ where: { email: email } }).then((user) => {
+        if (user != undefined) {
+            let correct = bcrypt.compareSync(password, user.password);
+            console.log(correct);
+            if (correct) {
+                /*req.session.user = {
+                    id: user.id,
+                    email: user.email
+                }*/
+                console.log(req.session);
+                res.json({
+                    "userId": user.id,
+                    "userEmail": user.email
+                })
+            } else {
+                res.redirect("/login");
+            }
+        } else {
+            res.redirect("/login");
+        }
+    })
+
 })
 
 module.exports = router;
