@@ -1,4 +1,5 @@
 const express = require('express');
+const app = express();
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 
@@ -23,7 +24,6 @@ router.post("/user/new", (req, res) => {
             where: { email: email }
         })
             .then((data) => {
-                console.log('resultado da busca:', data)
 
                 // Se nenhum usuario com as credenciais existir, cria o usuario com os dados recebidos
                 if (data.length == 0) {
@@ -114,23 +114,39 @@ router.post("/login", (req, res) => {
             let correct = bcrypt.compareSync(password, user.password);
             console.log(correct);
             if (correct) {
-                /*req.session.user = {
+                req.session.user = {
                     id: user.id,
                     email: user.email
-                }*/
-                console.log(req.session);
+                }
                 res.json({
                     "userId": user.id,
                     "userEmail": user.email
                 })
             } else {
-                res.redirect("/login");
+                res.json({
+                    "status": 401,
+                    "message": "Invalid password"
+                })
             }
         } else {
-            res.redirect("/login");
+            res.json({
+                "status": 401,
+                "message": "Invalid email"
+            })
         }
+    }).catch((error) => {
+        res.json({
+            "status": "error",
+            "message": error
+        })
     })
 
+})
+
+router.get("/sessions", (req, res) => {
+    res.json({
+        "data": req.session.user
+    })
 })
 
 module.exports = router;
