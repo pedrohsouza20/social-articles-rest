@@ -4,13 +4,13 @@ const connection = require("../database/database");
 const User = connection.define("users", {
     userName: {
         type: Sequelize.STRING,
-        allowNull: false,
-        primaryKey: true
+        unique: true,
+        allowNull: false
     },
     email: {
         type: Sequelize.STRING,
-        allowNull: false,
-        primaryKey: true
+        unique: true,
+        allowNull: false
     }
 });
 
