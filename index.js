@@ -11,9 +11,13 @@ app.use(session({
 
 // Models
 const User = require('./models/User');
+const Article = require('./models/Article');
+const Comment = require('./models/Comment');
 
 // Controllers
 const usersControllers = require('./controllers/UsersController');
+const articlesControllers = require('./controllers/ArticlesController');
+const commentsControllers = require('./controllers/CommentsController');
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -27,6 +31,8 @@ connection.authenticate().
     })
 
 app.use("/", usersControllers);
+app.use("/", articlesControllers);
+app.use("/", commentsControllers);
 
 app.get('/', function (req, res) {
     res.send('Hello, World!');

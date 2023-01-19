@@ -22,12 +22,12 @@ const Comment = connection.define("comments", {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    deslikes: {
+    unlikes: {
         type: Sequelize.INTEGER,
         allowNull: false
     }
 });
 
-User.sync({ force: false }).then(() => { });
+Comment.sync({ force: false }).then(() => { });
 
 module.exports = Comment;

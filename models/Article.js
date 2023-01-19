@@ -14,7 +14,7 @@ const Article = connection.define("articles", {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    category: {
+    categoryId: {
         type: Sequelize.INTEGER,
         allowNull: false
     },
@@ -24,14 +24,16 @@ const Article = connection.define("articles", {
     },
     likes: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 0
     },
-    deslikes: {
+    unlikes: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 0
     }
 });
 
-User.sync({ force: false }).then(() => { });
+Article.sync({ force: false }).then(() => { });
 
 module.exports = Article;
