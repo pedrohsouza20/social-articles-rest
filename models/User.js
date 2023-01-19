@@ -15,6 +15,10 @@ const User = connection.define("users", {
     password: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    isActive: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: 1
     }
 });
 

@@ -143,6 +143,63 @@ router.post("/login", (req, res) => {
 
 })
 
+// Change user status
+// Disable user
+router.patch('/user/disable/:id', (req, res) => {
+    let id = req.params.id;
+
+    User.findOne({ where: { id: id } }).then((user) => {
+        if (user) {
+            user.update({
+                isActive: 0
+            }).then(() => res.json({
+                "status": "success",
+                "message": "User disabled successfully"
+            })).catch((error) => res.json({
+                "status": "error",
+                "message": "User cannot be disabled"
+            }))
+        }
+        else {
+            res.json({
+                "status": 404,
+                "message": "User not found"
+            })
+        }
+    }).catch((error) => res.json({
+        "status": "error",
+        "message": "An error occured while searching user"
+    }))
+})
+
+// Enable user
+router.patch('/user/enable/:id', (req, res) => {
+    let id = req.params.id;
+
+    User.findOne({ where: { id: id } }).then((user) => {
+        if (user) {
+            user.update({
+                isActive: 1
+            }).then(() => res.json({
+                "status": "success",
+                "message": "User enabled successfully"
+            })).catch((error) => res.json({
+                "status": "error",
+                "message": "User cannot be enabled"
+            }))
+        }
+        else {
+            res.json({
+                "status": 404,
+                "message": "User not found"
+            })
+        }
+    }).catch((error) => res.json({
+        "status": "error",
+        "message": "An error occured while searching user"
+    }))
+})
+
 router.get("/sessions", (req, res) => {
     res.json({
         "data": req.session.user
