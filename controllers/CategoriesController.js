@@ -65,6 +65,52 @@ router.get('/admin/categories', (req, res) => {
     })
 })
 
+// Change category name
+router.patch('/admin/category/change-name/:id', (req, res) => {
+    let { id } = req.params;
+    let { name } = req.body;
+
+    Category.update({ name: name }, {
+        where: {
+            id: id
+        }
+    }).then((category) => {
+        res.json({
+            "status": 200,
+            "message": "Category's name changed successfully"
+        })
+    }).catch((error) => {
+        res.json({
+            "status": "error",
+            "message": "An error occurred while changing category's name"
+        })
+    })
+})
+
+// Get category by Id
+router.get('/admin/category/:id', (req, res) => {
+    let { id } = req.params;
+
+    Category.findOne({ where: { id: id } }).then((category) => {
+        if (category) {
+            res.json({
+                "status": 200,
+                "categoryName": category.name
+            })
+        } else {
+            res.json({
+                "status": 404,
+                "message": "Category not found"
+            })
+        }
+    }).catch((error) => {
+        res.json({
+            "status": "error",
+            "message": "An error occurred while searching category"
+        })
+    })
+})
+
 // Disable category
 router.patch('/admin/category/disable/:id', (req, res) => {
     let { id } = req.params;
