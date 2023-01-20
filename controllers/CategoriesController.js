@@ -11,19 +11,43 @@ const Category = require('../models/Category');
 router.post('/admin/category/new', (req, res) => {
     let { name } = req.body;
 
-    Category.create({
-        name
-    }).then((category) => {
-        res.json({
-            "status": 201,
-            "message": `Category ${category.name} was created succesfully`
+    if (name.length > 0) {
+        Category.findOne({ where: { name: name } }).then((category) => {
+            if (category) {
+                res.json({
+                    "status": "error",
+                    "message": `The category ${name} already exists`
+                })
+            } else {
+                Category.create({
+                    name
+                }).then((category) => {
+                    res.json({
+                        "status": 201,
+                        "message": `Category ${category.name} was created succesfully`
+                    })
+                }).catch((error) => {
+                    res.json({
+                        "status": "error",
+                        "message": "An error occurred while creating category"
+                    })
+                })
+            }
+        }).catch((error) => {
+            res.json({
+                "status": "error",
+                "message": "An error occurred while searching existing category"
+            })
         })
-    }).catch((error) => {
+    }
+
+    else {
         res.json({
-            "status": "error",
-            "message": "An error occurred while creating category"
+            "status": 400,
+            "message": "Category's name cannot be null"
         })
-    })
+    }
+
 })
 
 // Get all categories
