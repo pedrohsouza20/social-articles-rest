@@ -20,11 +20,13 @@ const Comment = connection.define("comments", {
     },
     likes: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 0
     },
     unlikes: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 0
     }
 });
 
