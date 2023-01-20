@@ -7,22 +7,16 @@ const User = require("../models/User");
 const Article = require('../models/Article');
 
 router.post("/article/new", (req, res) => {
-    let title = req.body.title;
-    let body = req.body.body;
-    let authorId = req.body.authorId;
-    let categoryId = req.body.categoryId;
-    let edited = req.body.edited ? req.body.title : 0;
-    let likes = req.body.likes ? req.body.likes : 0;
-    let unlikes = req.body.unlikes ? req.body.unlikes : 0;
-    console.log('sim');
+    let { title, body, authorId, categoryId, edited, likes, unlikes } = req.body;
+
     Article.create({
-        title: title,
-        body: body,
-        authorId: authorId,
-        categoryId: categoryId,
+        title,
+        body,
+        authorId,
+        categoryId,
         edited: 0,
-        likes: likes,
-        unlikes: unlikes
+        likes,
+        unlikes
     }).then((comment) => {
         res.json({
             "status": 201,
@@ -33,7 +27,6 @@ router.post("/article/new", (req, res) => {
             "status": "error",
             "message": "An error occurred while creating a new article."
         })
-        console.log(error)
     })
 })
 

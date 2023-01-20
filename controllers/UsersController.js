@@ -7,9 +7,7 @@ const User = require("../models/User");
 
 // Post de users
 router.post("/user/new", (req, res) => {
-    let userName = req.body.userName;
-    let email = req.body.email;
-    let password = req.body.password;
+    let { userName, email, password } = req.body;
 
     let salt = bcrypt.genSaltSync(10);
     let hash = bcrypt.hashSync(password, salt);
@@ -28,8 +26,8 @@ router.post("/user/new", (req, res) => {
                 // Se nenhum usuario com as credenciais existir, cria o usuario com os dados recebidos
                 if (data.length == 0) {
                     User.create({
-                        userName: userName,
-                        email: email,
+                        userName,
+                        email,
                         password: hash
                     })
                         .then(() => {
@@ -75,7 +73,7 @@ router.get("/users", (req, res) => {
 
 // Get users por ID
 router.get("/user/:id", (req, res) => {
-    let id = req.params.id;
+    let { id } = req.params;
     User.findOne({ where: { id: id } }).then((user) => {
         if (user) {
             res.json({
@@ -106,13 +104,11 @@ router.get("/user/:id", (req, res) => {
 
 // Login
 router.post("/login", (req, res) => {
-    let email = req.body.email;
-    let password = req.body.password;
+    let { email, password } = req.body;
 
     User.findOne({ where: { email: email } }).then((user) => {
         if (user != undefined) {
             let correct = bcrypt.compareSync(password, user.password);
-            console.log(correct);
             if (correct) {
                 req.session.user = {
                     id: user.id,
@@ -146,7 +142,7 @@ router.post("/login", (req, res) => {
 // Change user status
 // Disable user
 router.patch('/user/disable/:id', (req, res) => {
-    let id = req.params.id;
+    let { id } = req.params;
 
     User.findOne({ where: { id: id } }).then((user) => {
         if (user) {
@@ -174,7 +170,7 @@ router.patch('/user/disable/:id', (req, res) => {
 
 // Enable user
 router.patch('/user/enable/:id', (req, res) => {
-    let id = req.params.id;
+    let { id } = req.params;
 
     User.findOne({ where: { id: id } }).then((user) => {
         if (user) {
