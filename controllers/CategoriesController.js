@@ -41,4 +41,70 @@ router.get('/admin/categories', (req, res) => {
     })
 })
 
+// Disable category
+router.patch('/admin/category/disable/:id', (req, res) => {
+    let { id } = req.params;
+
+    Category.update(
+        { isActive: 0 },
+        {
+            where: {
+                id: id
+            }
+        }
+    ).then((category) => {
+        if (category != 0) {
+            console.log(category)
+            res.json({
+                "status": 200,
+                "message": `Category ${category} was disabled successfully`
+            })
+        }
+        else {
+            res.json({
+                "status": 404,
+                "message": "Category not found"
+            })
+        }
+    }).catch((error) => {
+        res.json({
+            "status": "error",
+            "message": "An error occurred while disable category"
+        })
+    })
+})
+
+// Enable category
+router.patch('/admin/category/enable/:id', (req, res) => {
+    let { id } = req.params;
+
+    Category.update(
+        { isActive: 1 },
+        {
+            where: {
+                id: id
+            }
+        }
+    ).then((category) => {
+        if (category != 0) {
+            console.log(category)
+            res.json({
+                "status": 200,
+                "message": `Category ${category} was enabled successfully`
+            })
+        }
+        else {
+            res.json({
+                "status": 404,
+                "message": "Category not found"
+            })
+        }
+    }).catch((error) => {
+        res.json({
+            "status": "error",
+            "message": "An error occurred while enabled category"
+        })
+    })
+})
+
 module.exports = router;
