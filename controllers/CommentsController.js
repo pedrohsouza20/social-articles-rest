@@ -30,11 +30,44 @@ router.post('/comment/new', (req, res) => {
         })
 })
 
-// Get comment by authorId
+// Get all comments
+router.get('/comments', (req, res) => {
+    Comment.findAll().then((comments) => {
+        res.json({
+            "status": 200,
+            "comments": comments
+        })
+    }).catch((error) => {
+        console.log(error)
+        res.json({
+            "status": "error",
+            "message": "An error occurred while searching comments"
+        })
+    })
+})
+
+// Get comments by authorId
 router.get('/user/:id/comments/', (req, res) => {
     let { id } = req.params;
 
     Comment.findAll({ where: { authorId: id } }).then((comments) => {
+        res.json({
+            "status": 200,
+            "comments": comments
+        })
+    }).catch((error) => {
+        res.json({
+            "status": "error",
+            "message": "An error occurred while searching comments"
+        })
+    })
+})
+
+// Get comments by articleId
+router.get('/article/:id/comments', (req, res) => {
+    let { id } = req.params;
+
+    Comment.findAll({ where: { articleId: id } }).then((comments) => {
         res.json({
             "status": 200,
             "comments": comments
