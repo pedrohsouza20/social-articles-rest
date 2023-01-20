@@ -58,13 +58,25 @@ router.post("/user/new", (req, res) => {
 })
 
 // Get de todos users
-router.get("/users", (req, res) => {
+router.get("/admin/users", (req, res) => {
     User.findAll({
-        where: {
-            id: 2
-        }
+
     }).then((users) => {
-        res.json(users)
+        let allUsers = [];
+        
+        users.forEach((user, index, array) => {
+            allUsers[index] = {
+                "id": user.id,
+                "userName": user.userName,
+                "email": user.email,
+                "isActive": user.isActive
+            };
+        })
+        res.json(
+            {
+                "users": allUsers
+            }
+        )
     }).catch(error => res.json({
         "status": "error",
         "message": error
