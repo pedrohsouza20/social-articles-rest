@@ -15,6 +15,11 @@ function adminMiddleware(req, res, next) {
             } else {
                 if (data.userAccountType === 'admin') {
                     next();
+                } else {
+                    res.json({
+                        "status": 401,
+                        "message": "Unauthorized"
+                    })
                 }
             }
         })
