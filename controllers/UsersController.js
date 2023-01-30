@@ -7,7 +7,7 @@ const User = require("../models/User");
 
 // Post de users
 router.post("/user/new", (req, res) => {
-    let { userName, email, password } = req.body;
+    let { userName, email, password, accountType } = req.body;
 
     let salt = bcrypt.genSaltSync(10);
     let hash = bcrypt.hashSync(password, salt);
@@ -28,7 +28,8 @@ router.post("/user/new", (req, res) => {
                     User.create({
                         userName,
                         email,
-                        password: hash
+                        password: hash,
+                        accountType
                     })
                         .then(() => {
                             res.json({ "status": 201, "message": "User created successfully" });
@@ -86,6 +87,7 @@ router.get("/admin/users", (req, res) => {
 // Get users por ID
 router.get("/user/:id", (req, res) => {
     let { id } = req.params;
+    
     User.findOne({ where: { id: id } }).then((user) => {
         if (user) {
             res.json({

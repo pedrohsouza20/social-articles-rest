@@ -18,7 +18,13 @@ const User = connection.define("users", {
     },
     isActive: {
         type: Sequelize.BOOLEAN,
-        defaultValue: 1
+        defaultValue: 1,
+        allowNull: false
+    },
+    accountType: {
+        type: Sequelize.STRING,
+        defaultValue: 'common',
+        allowNull: false
     }
 });
 
