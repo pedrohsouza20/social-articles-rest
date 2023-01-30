@@ -6,7 +6,7 @@ const connection = require('./database/database');
 const PORT = 3000;
 
 app.use(session({
-    secret: 'CHAVESEGREDO', cookie: { maxAge: 30000 }
+    secret: 'KEY_SESSION_1927385927392_SESSION_KEY', cookie: { maxAge: 30000 }
 }))
 
 // Models

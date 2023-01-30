@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 
 const User = require("../models/User");
+const adminAuth = require('../middlewares/adminAuth');
 
 // Post de users
 router.post("/user/new", (req, res) => {
@@ -59,12 +60,12 @@ router.post("/user/new", (req, res) => {
 })
 
 // Get de todos users
-router.get("/admin/users", (req, res) => {
+router.get("/admin/users", adminAuth, (req, res) => {
     User.findAll({
 
     }).then((users) => {
         let allUsers = [];
-        
+
         users.forEach((user, index, array) => {
             allUsers[index] = {
                 "id": user.id,
@@ -87,7 +88,7 @@ router.get("/admin/users", (req, res) => {
 // Get users por ID
 router.get("/user/:id", (req, res) => {
     let { id } = req.params;
-    
+
     User.findOne({ where: { id: id } }).then((user) => {
         if (user) {
             res.json({
@@ -126,7 +127,8 @@ router.post("/login", (req, res) => {
             if (correct) {
                 req.session.user = {
                     id: user.id,
-                    email: user.email
+                    email: user.email,
+                    accountType: user.accountType
                 }
                 res.json({
                     "userId": user.id,
