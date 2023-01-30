@@ -1,13 +1,11 @@
 const express = require('express');
 const app = express();
 
-const session = require('express-session');
-const connection = require('./database/database');
-const PORT = 3000;
+const dotEnv = require('dotenv').config();
 
-app.use(session({
-    secret: 'KEY_SESSION_1927385927392_SESSION_KEY', cookie: { maxAge: 30000 }
-}))
+const connection = require('./database/database');
+const jwt = require('jsonwebtoken');
+const PORT = 3000;
 
 // Models
 const User = require('./models/User');

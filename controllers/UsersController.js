@@ -3,6 +3,10 @@ const app = express();
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 
+const dotenv = require('dotenv').config();
+
+const jwt = require('jsonwebtoken');
+
 const User = require("../models/User");
 const adminAuth = require('../middlewares/adminAuth');
 
@@ -125,14 +129,23 @@ router.post("/login", (req, res) => {
         if (user != undefined) {
             let correct = bcrypt.compareSync(password, user.password);
             if (correct) {
-                req.session.user = {
-                    id: user.id,
-                    email: user.email,
-                    accountType: user.accountType
-                }
-                res.json({
-                    "userId": user.id,
-                    "userEmail": user.email
+
+                jwt.sign({
+                    userId: user.id,
+                    userEmail: user.email,
+                    userAccountType: user.accountType
+                }, process.env.JWT_SECRET, { expiresIn: "24h" }, (err, token) => {
+                    if (err) {
+                        res.status(400);
+                        res.json({
+                            "err": "Internal error"
+                        })
+                    } else {
+                        res.status(200);
+                        res.json({
+                            "token": token
+                        })
+                    }
                 })
             } else {
                 res.json({
@@ -210,12 +223,6 @@ router.patch('/user/enable/:id', (req, res) => {
         "status": "error",
         "message": "An error occured while searching user"
     }))
-})
-
-router.get("/sessions", (req, res) => {
-    res.json({
-        "data": req.session.user
-    })
 })
 
 module.exports = router;
