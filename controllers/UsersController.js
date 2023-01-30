@@ -8,7 +8,7 @@ const dotenv = require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 const User = require("../models/User");
-const adminAuth = require('../middlewares/adminAuth');
+const adminMiddleware = require('../middlewares/adminMiddleware');
 
 // Post de users
 router.post("/user/new", (req, res) => {
@@ -64,7 +64,7 @@ router.post("/user/new", (req, res) => {
 })
 
 // Get de todos users
-router.get("/admin/users", adminAuth, (req, res) => {
+router.get("/admin/users", adminMiddleware, (req, res) => {
     User.findAll({
 
     }).then((users) => {
