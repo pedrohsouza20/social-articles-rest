@@ -1,5 +1,5 @@
 export default class IJWTPayload {
-    userId?: Number;
-    userEmail?: String;
-    userAccountType?: String;
+  userId?: Number;
+  userEmail?: String;
+  userAccountType?: String;
 }
