@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 
 const router = express.Router();
 const Article = require('../models/Article');
+import IArticle from '../interfaces/IArticle';
 
 // Post new article
 router.post("/article/new", (req: Request, res: Response) => {
@@ -17,7 +18,7 @@ router.post("/article/new", (req: Request, res: Response) => {
             "status": 201,
             "message": "Article created successfully."
         })
-    }).catch((error: Error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while creating a new article."
@@ -26,12 +27,12 @@ router.post("/article/new", (req: Request, res: Response) => {
 })
 
 // Get all articles
-router.get("/articles", (req, res) => {
-    Article.findAll().then((articles: []) => {
+router.get("/articles", (req: Request, res: Response) => {
+    Article.findAll().then((articles: IArticle[]) => {
         res.json({
             "articles": articles
         })
-    }).catch((error: Error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching articles"
@@ -40,10 +41,10 @@ router.get("/articles", (req, res) => {
 })
 
 // Get articles by Id
-router.get("/article/:id", (req, res) => {
+router.get("/article/:id", (req: Request, res: Response) => {
     let { id } = req.params;
 
-    Article.findOne({ where: { id: id } }).then((article: Object) => {
+    Article.findOne({ where: { id: id } }).then((article: IArticle) => {
         if (article) {
             res.json({
                 "status": 200,
@@ -56,7 +57,7 @@ router.get("/article/:id", (req, res) => {
                 "message": "Article not found"
             })
         }
-    }).catch((error: Error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching article"
@@ -67,7 +68,8 @@ router.get("/article/:id", (req, res) => {
 // Get articles by authorId
 router.get("/user/:id/articles", (req: Request, res: Response) => {
     let { id } = req.params;
-    Article.findAll({ where: { authorId: id } }).then((articles: []) => {
+
+    Article.findAll({ where: { authorId: id } }).then((articles: IArticle[]) => {
         res.json({
             "status": 200,
             "articles": articles

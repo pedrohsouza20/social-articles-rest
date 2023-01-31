@@ -2,13 +2,15 @@ import express, { Request, Response } from "express";
 
 const router = express.Router();
 const Category = require('../models/Category');
+import ICategory from "../interfaces/ICategory";
 
 // Create new category
-router.post('/admin/category/new', (req, res) => {
+router.post('/admin/category/new', (req: Request, res: Response) => {
     let { name } = req.body;
 
     if (name.length > 0) {
-        Category.findOne({ where: { name: name } }).then((category: any) => {
+        Category.findOne({ where: { name: name } }).then((category: ICategory) => {
+
             if (category) {
                 res.json({
                     "status": "error",
@@ -17,7 +19,7 @@ router.post('/admin/category/new', (req, res) => {
             } else {
                 Category.create({
                     name
-                }).then((category: any) => {
+                }).then((category: Object | any) => {
                     res.json({
                         "status": 201,
                         "message": `Category ${category.name} was created succesfully`
@@ -29,7 +31,7 @@ router.post('/admin/category/new', (req, res) => {
                     })
                 })
             }
-        }).catch((error: Error) => {
+        }).catch(() => {
             res.json({
                 "status": "error",
                 "message": "An error occurred while searching existing category"
@@ -47,13 +49,13 @@ router.post('/admin/category/new', (req, res) => {
 })
 
 // Get all categories
-router.get('/admin/categories', (req:Request, res: Response) => {
-    Category.findAll().then((categories: any) => {
+router.get('/admin/categories', (req: Request, res: Response) => {
+    Category.findAll().then((categories: ICategory[]) => {
         res.json({
             "status": 200,
             "categories": categories
         })
-    }).catch((error: Error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching categories"
@@ -62,7 +64,7 @@ router.get('/admin/categories', (req:Request, res: Response) => {
 })
 
 // Change category name
-router.patch('/admin/category/change-name/:id', (req, res) => {
+router.patch('/admin/category/change-name/:id', (req: Request, res: Response) => {
     let { id } = req.params;
     let { name } = req.body;
 
@@ -70,12 +72,12 @@ router.patch('/admin/category/change-name/:id', (req, res) => {
         where: {
             id: id
         }
-    }).then((category:any) => {
+    }).then(() => {
         res.json({
             "status": 200,
             "message": "Category's name changed successfully"
         })
-    }).catch((error: Error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while changing category's name"
@@ -84,10 +86,10 @@ router.patch('/admin/category/change-name/:id', (req, res) => {
 })
 
 // Get category by Id
-router.get('/admin/category/:id', (req, res) => {
+router.get('/admin/category/:id', (req: Request, res: Response) => {
     let { id } = req.params;
 
-    Category.findOne({ where: { id: id } }).then((category: any) => {
+    Category.findOne({ where: { id: id } }).then((category: ICategory) => {
         if (category) {
             res.json({
                 "status": 200,
@@ -99,7 +101,7 @@ router.get('/admin/category/:id', (req, res) => {
                 "message": "Category not found"
             })
         }
-    }).catch((error: Error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching category"
@@ -118,12 +120,11 @@ router.patch('/admin/category/disable/:id', (req: Request, res: Response) => {
                 id: id
             }
         }
-    ).then((category: any) => {
-        if (category != 0) {
-            console.log(category)
+    ).then((category: ICategory | Object | any) => {
+        if (category[0] !== 0) {
             res.json({
                 "status": 200,
-                "message": `Category ${category} was disabled successfully`
+                "message": `Category ${id} was disabled successfully`
             })
         }
         else {
@@ -132,7 +133,7 @@ router.patch('/admin/category/disable/:id', (req: Request, res: Response) => {
                 "message": "Category not found"
             })
         }
-    }).catch((error: Error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while disable category"
@@ -141,7 +142,7 @@ router.patch('/admin/category/disable/:id', (req: Request, res: Response) => {
 })
 
 // Enable category
-router.patch('/admin/category/enable/:id', (req, res) => {
+router.patch('/admin/category/enable/:id', (req: Request, res: Response) => {
     let { id } = req.params;
 
     Category.update(
@@ -151,12 +152,11 @@ router.patch('/admin/category/enable/:id', (req, res) => {
                 id: id
             }
         }
-    ).then((category: any) => {
-        if (category != 0) {
-            console.log(category)
+    ).then((category: ICategory | Object | any) => {
+        if (category[0] !== 0) {
             res.json({
                 "status": 200,
-                "message": `Category ${category} was enabled successfully`
+                "message": `Category ${id} was enabled successfully`
             })
         }
         else {
@@ -165,10 +165,10 @@ router.patch('/admin/category/enable/:id', (req, res) => {
                 "message": "Category not found"
             })
         }
-    }).catch((error: Error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
-            "message": "An error occurred while enabled category"
+            "message": "An error occurred while enable category"
         })
     })
 })

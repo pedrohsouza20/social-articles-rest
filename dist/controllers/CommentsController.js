@@ -20,8 +20,7 @@ router.post('/comment/new', (req, res) => {
             "comment": comment
         });
     })
-        .catch((error) => {
-        console.log(error);
+        .catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while creating comment"
@@ -51,7 +50,7 @@ router.get('/user/:id/comments/', (req, res) => {
             "status": 200,
             "comments": comments
         });
-    }).catch((error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching comments"
@@ -66,7 +65,7 @@ router.get('/article/:id/comments', (req, res) => {
             "status": 200,
             "comments": comments
         });
-    }).catch((error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching comments"

@@ -19,7 +19,7 @@ router.post("/article/new", (req, res) => {
             "status": 201,
             "message": "Article created successfully."
         });
-    }).catch((error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while creating a new article."
@@ -32,7 +32,7 @@ router.get("/articles", (req, res) => {
         res.json({
             "articles": articles
         });
-    }).catch((error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching articles"
@@ -55,7 +55,7 @@ router.get("/article/:id", (req, res) => {
                 "message": "Article not found"
             });
         }
-    }).catch((error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching article"

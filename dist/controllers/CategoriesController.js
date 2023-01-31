@@ -32,7 +32,7 @@ router.post('/admin/category/new', (req, res) => {
                     });
                 });
             }
-        }).catch((error) => {
+        }).catch(() => {
             res.json({
                 "status": "error",
                 "message": "An error occurred while searching existing category"
@@ -53,7 +53,7 @@ router.get('/admin/categories', (req, res) => {
             "status": 200,
             "categories": categories
         });
-    }).catch((error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching categories"
@@ -68,12 +68,12 @@ router.patch('/admin/category/change-name/:id', (req, res) => {
         where: {
             id: id
         }
-    }).then((category) => {
+    }).then(() => {
         res.json({
             "status": 200,
             "message": "Category's name changed successfully"
         });
-    }).catch((error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while changing category's name"
@@ -96,7 +96,7 @@ router.get('/admin/category/:id', (req, res) => {
                 "message": "Category not found"
             });
         }
-    }).catch((error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching category"
@@ -111,11 +111,10 @@ router.patch('/admin/category/disable/:id', (req, res) => {
             id: id
         }
     }).then((category) => {
-        if (category != 0) {
-            console.log(category);
+        if (category[0] !== 0) {
             res.json({
                 "status": 200,
-                "message": `Category ${category} was disabled successfully`
+                "message": `Category ${id} was disabled successfully`
             });
         }
         else {
@@ -124,7 +123,7 @@ router.patch('/admin/category/disable/:id', (req, res) => {
                 "message": "Category not found"
             });
         }
-    }).catch((error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "An error occurred while disable category"
@@ -139,11 +138,10 @@ router.patch('/admin/category/enable/:id', (req, res) => {
             id: id
         }
     }).then((category) => {
-        if (category != 0) {
-            console.log(category);
+        if (category[0] !== 0) {
             res.json({
                 "status": 200,
-                "message": `Category ${category} was enabled successfully`
+                "message": `Category ${id} was enabled successfully`
             });
         }
         else {
@@ -152,10 +150,10 @@ router.patch('/admin/category/enable/:id', (req, res) => {
                 "message": "Category not found"
             });
         }
-    }).catch((error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
-            "message": "An error occurred while enabled category"
+            "message": "An error occurred while enable category"
         });
     });
 });

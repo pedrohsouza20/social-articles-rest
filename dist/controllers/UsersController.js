@@ -46,13 +46,13 @@ router.post("/user/new", (req, res) => {
                 res.json({ "status": "error", "message": "User already exists" });
             }
         }).
-            catch((error) => {
+            catch(() => {
             res.json({
                 "status": "error",
                 "message": "Occurred and error while searching users by email"
             });
         });
-    }).catch((error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "Occurred and error while searching users by userName"
@@ -169,7 +169,7 @@ router.patch('/user/disable/:id', adminMiddleware, (req, res) => {
                     "status": "success",
                     "message": "User disabled successfully"
                 });
-            }).catch((error) => res.json({
+            }).catch(() => res.json({
                 "status": "error",
                 "message": "User cannot be disabled"
             }));
@@ -181,7 +181,7 @@ router.patch('/user/disable/:id', adminMiddleware, (req, res) => {
                 "message": "User not found"
             });
         }
-    }).catch((error) => res.json({
+    }).catch(() => res.json({
         "status": "error",
         "message": "An error occured while searching user"
     }));
@@ -209,7 +209,7 @@ router.patch('/user/enable/:id', adminMiddleware, (req, res) => {
                     "status": "success",
                     "message": "User enabled successfully"
                 });
-            }).catch((error) => res.json({
+            }).catch(() => res.json({
                 "status": "error",
                 "message": "User cannot be enabled"
             }));
@@ -221,7 +221,7 @@ router.patch('/user/enable/:id', adminMiddleware, (req, res) => {
                 "message": "User not found"
             });
         }
-    }).catch((error) => res.json({
+    }).catch(() => res.json({
         "status": "error",
         "message": "An error occured while searching user"
     }));

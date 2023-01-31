@@ -1,10 +1,12 @@
 import express, { Request, Response } from "express";
+import { Model } from "sequelize";
 
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require("../models/User");
 const adminMiddleware = require('../middlewares/adminMiddleware');
+import IUser from "../interfaces/IUser";
 
 // Post de users
 router.post("/user/new", (req: Request, res: Response) => {
@@ -22,7 +24,7 @@ router.post("/user/new", (req: Request, res: Response) => {
             // Procura no banco por usuarios com o email inserido
             where: { email: email }
         })
-            .then((data: any) => {
+            .then((data: IUser[]) => {
 
                 // Se nenhum usuario com as credenciais existir, cria o usuario com os dados recebidos
                 if (data.length == 0) {
@@ -46,13 +48,13 @@ router.post("/user/new", (req: Request, res: Response) => {
                     res.json({ "status": "error", "message": "User already exists" });
                 }
             }).
-            catch((error: Error) => {
+            catch(() => {
                 res.json({
                     "status": "error",
                     "message": "Occurred and error while searching users by email"
                 })
             })
-    }).catch((error: Error) => {
+    }).catch(() => {
         res.json({
             "status": "error",
             "message": "Occurred and error while searching users by userName"
@@ -64,10 +66,10 @@ router.post("/user/new", (req: Request, res: Response) => {
 // Get de todos users
 router.get("/admin/users", adminMiddleware, (req: Request, res: Response) => {
     User.findAll({})
-        .then((users: any) => {
+        .then((users: IUser[]) => {
             let allUsers: Object[] = [];
 
-            users.forEach((user: any, index: any) => {
+            users.forEach((user: IUser, index: Number | any) => {
                 let { id, userName, email, isActive } = user;
 
                 allUsers[index] = {
@@ -90,7 +92,7 @@ router.get("/admin/users", adminMiddleware, (req: Request, res: Response) => {
 router.get("/user/:id", (req: Request, res: Response) => {
     let { id } = req.params;
 
-    User.findOne({ where: { id: id } }).then((user: any) => {
+    User.findOne({ where: { id: id } }).then((user: IUser) => {
         if (user) {
             res.status(200);
             res.json({
@@ -118,7 +120,7 @@ router.get("/user/:id", (req: Request, res: Response) => {
 router.post("/login", (req: Request, res: Response) => {
     let { email, password } = req.body;
 
-    User.findOne({ where: { email: email } }).then((user: any) => {
+    User.findOne({ where: { email: email } }).then((user: IUser) => {
         if (user != undefined) {
             let correct = bcrypt.compareSync(password, user.password);
 
@@ -173,7 +175,7 @@ router.post("/login", (req: Request, res: Response) => {
 router.patch('/user/disable/:id', adminMiddleware, (req: Request, res: Response) => {
     let { id } = req.params;
 
-    User.findOne({ where: { id: id } }).then((user: any) => {
+    User.findOne({ where: { id: id } }).then((user: Model ) => {
         if (user) {
             user.update({
                 isActive: 0
@@ -183,7 +185,7 @@ router.patch('/user/disable/:id', adminMiddleware, (req: Request, res: Response)
                     "status": "success",
                     "message": "User disabled successfully"
                 })
-            }).catch((error: Error) => res.json({
+            }).catch(() => res.json({
                 "status": "error",
                 "message": "User cannot be disabled"
             }))
@@ -195,7 +197,7 @@ router.patch('/user/disable/:id', adminMiddleware, (req: Request, res: Response)
                 "message": "User not found"
             })
         }
-    }).catch((error: Error) => res.json({
+    }).catch(() => res.json({
         "status": "error",
         "message": "An error occured while searching user"
     }))
@@ -204,7 +206,7 @@ router.patch('/user/disable/:id', adminMiddleware, (req: Request, res: Response)
 // Enable user
 router.patch('/user/enable/:id', adminMiddleware, (req: Request, res: Response) => {
     let { id } = req.params;
-    let { selfUser }: any = req;
+    let { selfUser }: Number | any = req;
 
     // Nao permite que um usuario habilite a si mesmo
     if (selfUser.id == id) {
@@ -216,7 +218,7 @@ router.patch('/user/enable/:id', adminMiddleware, (req: Request, res: Response) 
         return;
     }
 
-    User.findOne({ where: { id: id } }).then((user: any) => {
+    User.findOne({ where: { id: id } }).then((user: Model) => {
         if (user) {
             user.update({
                 isActive: 1
@@ -226,7 +228,7 @@ router.patch('/user/enable/:id', adminMiddleware, (req: Request, res: Response) 
                     "status": "success",
                     "message": "User enabled successfully"
                 })
-            }).catch((error: Error) => res.json({
+            }).catch(() => res.json({
                 "status": "error",
                 "message": "User cannot be enabled"
             }))
@@ -238,7 +240,7 @@ router.patch('/user/enable/:id', adminMiddleware, (req: Request, res: Response) 
                 "message": "User not found"
             })
         }
-    }).catch((error: Error) => res.json({
+    }).catch(() => res.json({
         "status": "error",
         "message": "An error occured while searching user"
     }))
