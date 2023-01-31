@@ -1,19 +1,10 @@
-import express, { Express, Request, Response } from "express";
+import express, { Request, Response } from "express";
 
-//const express = require('express');
 const app = express();
-
-const dotEnv = require('dotenv').config();
 
 const connection = require('./database/database');
 const jwt = require('jsonwebtoken');
 const PORT = 3000;
-
-// Models
-const User = require('./models/User');
-const Article = require('./models/Article');
-const Comment = require('./models/Comment');
-const Category = require('./models/Category');
 
 // Controllers
 const usersControllers = require('./controllers/UsersController');
