@@ -37,3 +37,5 @@ const Article = connection.define("articles", {
 Article.sync({ force: false }).then(() => { });
 
 module.exports = Article;
+
+export { }

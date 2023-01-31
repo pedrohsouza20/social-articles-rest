@@ -1,6 +1,7 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Sequelize = require("sequelize");
 const connection = require("../database/database");
-
 const Category = connection.define("categories", {
     name: {
         type: Sequelize.STRING,
@@ -12,7 +13,5 @@ const Category = connection.define("categories", {
         defaultValue: 1
     }
 });
-
 Category.sync({ force: false }).then(() => { });
-
 module.exports = Category;

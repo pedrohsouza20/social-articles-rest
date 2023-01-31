@@ -1,13 +1,10 @@
-const express = require('express');
-const app = express();
-const router = express.Router();
-const bcrypt = require('bcryptjs');
+import express, { Request, Response } from "express";
 
-const User = require("../models/User");
+const router = express.Router();
 const Comment = require("../models/Comment");
 
 // Post new comment
-router.post('/comment/new', (req, res) => {
+router.post('/comment/new', (req: Request, res: Response) => {
     let { body, authorId, articleId } = req.body;
 
     Comment.create({
@@ -15,13 +12,13 @@ router.post('/comment/new', (req, res) => {
         authorId,
         articleId,
     })
-        .then((comment) => {
+        .then((comment: any) => {
             res.json({
                 "status": 201,
                 "comment": comment
             })
         })
-        .catch((error) => {
+        .catch((error: Error) => {
             console.log(error);
             res.json({
                 "status": "error",
@@ -31,13 +28,13 @@ router.post('/comment/new', (req, res) => {
 })
 
 // Get all comments
-router.get('/comments', (req, res) => {
-    Comment.findAll().then((comments) => {
+router.get('/comments', (req: Request, res: Response) => {
+    Comment.findAll().then((comments: any) => {
         res.json({
             "status": 200,
             "comments": comments
         })
-    }).catch((error) => {
+    }).catch((error: Error) => {
         console.log(error)
         res.json({
             "status": "error",
@@ -47,15 +44,15 @@ router.get('/comments', (req, res) => {
 })
 
 // Get comments by authorId
-router.get('/user/:id/comments/', (req, res) => {
+router.get('/user/:id/comments/', (req: Request, res: Response) => {
     let { id } = req.params;
 
-    Comment.findAll({ where: { authorId: id } }).then((comments) => {
+    Comment.findAll({ where: { authorId: id } }).then((comments: any) => {
         res.json({
             "status": 200,
             "comments": comments
         })
-    }).catch((error) => {
+    }).catch((error: Error) => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching comments"
@@ -67,12 +64,12 @@ router.get('/user/:id/comments/', (req, res) => {
 router.get('/article/:id/comments', (req, res) => {
     let { id } = req.params;
 
-    Comment.findAll({ where: { articleId: id } }).then((comments) => {
+    Comment.findAll({ where: { articleId: id } }).then((comments: any) => {
         res.json({
             "status": 200,
             "comments": comments
         })
-    }).catch((error) => {
+    }).catch((error: Error) => {
         res.json({
             "status": "error",
             "message": "An error occurred while searching comments"
@@ -81,3 +78,5 @@ router.get('/article/:id/comments', (req, res) => {
 })
 
 module.exports = router;
+
+export { }

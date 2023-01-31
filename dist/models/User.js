@@ -1,6 +1,7 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Sequelize = require("sequelize");
 const connection = require("../database/database");
-
 const User = connection.define("users", {
     userName: {
         type: Sequelize.STRING,
@@ -27,7 +28,5 @@ const User = connection.define("users", {
         allowNull: false
     }
 });
-
 User.sync({ force: false }).then(() => { });
-
 module.exports = User;

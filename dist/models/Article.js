@@ -1,7 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Sequelize = require("sequelize");
 const connection = require("../database/database");
-
-const Comment = connection.define("comments", {
+const Article = connection.define("articles", {
+    title: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     body: {
         type: Sequelize.STRING,
         allowNull: false
@@ -10,7 +15,7 @@ const Comment = connection.define("comments", {
         type: Sequelize.INTEGER,
         allowNull: false
     },
-    articleId: {
+    categoryId: {
         type: Sequelize.INTEGER,
         allowNull: false
     },
@@ -29,7 +34,5 @@ const Comment = connection.define("comments", {
         defaultValue: 0
     }
 });
-
-Comment.sync({ force: false }).then(() => { });
-
-module.exports = Comment;
+Article.sync({ force: false }).then(() => { });
+module.exports = Article;
