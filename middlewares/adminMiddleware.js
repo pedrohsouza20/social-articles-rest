@@ -13,6 +13,8 @@ function adminMiddleware(req, res, next) {
                     "message": "Invalid token"
                 })
             } else {
+                req.selfUser = { id: data.userId }
+                
                 if (data.userAccountType === 'admin') {
                     next();
                 } else {

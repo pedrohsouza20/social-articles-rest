@@ -37,9 +37,11 @@ router.post("/user/new", (req, res) => {
                         accountType
                     })
                         .then(() => {
-                            res.json({ "status": 201, "message": "User created successfully" });
+                            res.status(201);
+                            res.json({ "status": "success", "message": "User created successfully" });
                         })
                         .catch((error) => {
+                            res.status(409);
                             res.json({ "status": "error", "message": error })
                         })
                 }
@@ -65,28 +67,27 @@ router.post("/user/new", (req, res) => {
 
 // Get de todos users
 router.get("/admin/users", adminMiddleware, (req, res) => {
-    User.findAll({
+    User.findAll({})
+        .then((users) => {
+            let allUsers = [];
 
-    }).then((users) => {
-        let allUsers = [];
+            users.forEach((user, index, array) => {
+                let { id, userName, email, isActive } = user;
 
-        users.forEach((user, index, array) => {
-            allUsers[index] = {
-                "id": user.id,
-                "userName": user.userName,
-                "email": user.email,
-                "isActive": user.isActive
-            };
-        })
-        res.json(
-            {
-                "users": allUsers
-            }
-        )
-    }).catch(error => res.json({
-        "status": "error",
-        "message": error
-    }))
+                allUsers[index] = {
+                    id,
+                    userName,
+                    email,
+                    isActive
+                };
+            });
+
+            res.status(200);
+            res.json({ "users": allUsers });
+        }).catch(error => res.json({
+            "status": "error",
+            "message": error
+        }))
 })
 
 // Get users por ID
@@ -95,21 +96,17 @@ router.get("/user/:id", (req, res) => {
 
     User.findOne({ where: { id: id } }).then((user) => {
         if (user) {
+            res.status(200);
             res.json({
                 "userName": user.userName,
                 "email": user.email
             })
         }
-        else if (user == null) {
-            res.json({
-                "status": 404,
-                "message": "Not found"
-            })
-        }
         else {
+            res.status(404);
             res.json({
                 "status": "error",
-                "message": "An error was occurred"
+                "message": "Not found"
             })
         }
     })
@@ -128,34 +125,41 @@ router.post("/login", (req, res) => {
     User.findOne({ where: { email: email } }).then((user) => {
         if (user != undefined) {
             let correct = bcrypt.compareSync(password, user.password);
-            if (correct) {
 
-                jwt.sign({
-                    userId: user.id,
-                    userEmail: user.email,
-                    userAccountType: user.accountType
-                }, process.env.JWT_SECRET, { expiresIn: "24h" }, (err, token) => {
-                    if (err) {
-                        res.status(400);
-                        res.json({
-                            "err": "Internal error"
-                        })
-                    } else {
-                        res.status(200);
-                        res.json({
-                            "token": token
-                        })
-                    }
-                })
+            if (correct) {
+                jwt.sign(
+                    {
+                        userId: user.id,
+                        userEmail: user.email,
+                        userAccountType: user.accountType
+                    },
+                    process.env.JWT_SECRET,
+                    { expiresIn: "24h" },
+                    (err, token) => {
+                        if (err) {
+                            res.status(400);
+                            res.json({
+                                "status": "error",
+                                "message": "Internal error"
+                            })
+                        } else {
+                            res.status(200);
+                            res.json({
+                                "token": token
+                            })
+                        }
+                    })
             } else {
+                res.status(401);
                 res.json({
-                    "status": 401,
+                    "status": "error",
                     "message": "Invalid password"
                 })
             }
         } else {
+            res.status(401);
             res.json({
-                "status": 401,
+                "status": "error",
                 "message": "Invalid email"
             })
         }
@@ -170,24 +174,28 @@ router.post("/login", (req, res) => {
 
 // Change user status
 // Disable user
-router.patch('/user/disable/:id', (req, res) => {
+router.patch('/user/disable/:id', adminMiddleware, (req, res) => {
     let { id } = req.params;
 
     User.findOne({ where: { id: id } }).then((user) => {
         if (user) {
             user.update({
                 isActive: 0
-            }).then(() => res.json({
-                "status": "success",
-                "message": "User disabled successfully"
-            })).catch((error) => res.json({
+            }).then(() => {
+                res.status(200);
+                res.json({
+                    "status": "success",
+                    "message": "User disabled successfully"
+                })
+            }).catch((error) => res.json({
                 "status": "error",
                 "message": "User cannot be disabled"
             }))
         }
         else {
+            res.status(404);
             res.json({
-                "status": 404,
+                "status": "error",
                 "message": "User not found"
             })
         }
@@ -198,24 +206,39 @@ router.patch('/user/disable/:id', (req, res) => {
 })
 
 // Enable user
-router.patch('/user/enable/:id', (req, res) => {
+router.patch('/user/enable/:id', adminMiddleware, (req, res) => {
     let { id } = req.params;
+    let { selfUser } = req;
+
+    // Nao permite que um usuario habilite a si mesmo
+    if (selfUser.id == id) {
+        res.status(401);
+        res.json({
+            "status": "error",
+            "message": "An user cannot enable himself"
+        });
+        return;
+    }
 
     User.findOne({ where: { id: id } }).then((user) => {
         if (user) {
             user.update({
                 isActive: 1
-            }).then(() => res.json({
-                "status": "success",
-                "message": "User enabled successfully"
-            })).catch((error) => res.json({
+            }).then(() => {
+                res.status(200);
+                res.json({
+                    "status": "success",
+                    "message": "User enabled successfully"
+                })
+            }).catch((error) => res.json({
                 "status": "error",
                 "message": "User cannot be enabled"
             }))
         }
         else {
+            res.status(404);
             res.json({
-                "status": 404,
+                "status": "error",
                 "message": "User not found"
             })
         }
